@@ -105,10 +105,20 @@ fig1 = px.scatter(df_grouped, x='week_of_year', y=plot_option, color='Aid Year',
              width=1400, height=400, color_discrete_sequence=px.colors.qualitative.G10)
 fig1.update_xaxes(title_text="Week", tickvals=np.arange(54), ticktext=['Week {}'.format(i) for i in range(54)])
 
-fig2 = px.line(df_grouped, x='week_of_year', y=plot_option, color='Aid Year',
-             labels={plot_option: plot_option, 'week_of_year': 'Week', 'year': 'Year'},
-             width=1400, height=400, color_discrete_sequence=px.colors.qualitative.G10)
-fig2.update_xaxes(title_text="Week", tickvals=np.arange(54), ticktext=['Week {}'.format(i) for i in range(54)])
+# fig2 = px.line(df_grouped, x='week_of_year', y=plot_option, color='Aid Year',
+#              labels={plot_option: plot_option, 'week_of_year': 'Week', 'year': 'Year'},
+#              width=1400, height=400, color_discrete_sequence=px.colors.qualitative.G10)
+# fig2.update_xaxes(title_text="Week", tickvals=np.arange(54), ticktext=['Week {}'.format(i) for i in range(54)])
+
+new_year = 2024
+df['Date'] = df['Date'].apply(lambda x: x.replace(year=new_year))
+df = df.sort_values('Date')
+df['Date(month_day)'] = df['Date'].apply(lambda x: x.strftime('%b') + '-' +str(x.day))
+
+fig2 = px.scatter(df, x='Date', y=plot_option, color='Aid Year',
+             hover_data={'Date': False, plot_option: True, 'Date(month_day)':True})
+
+fig2.update_traces(mode='lines+markers')
 
 # fig2 = px.line(df_grouped, x='week_of_year', y=plot_option, color='Aid Year',
 #              labels={plot_option: plot_option, 'week': 'Week', 'year': 'Year', 'month': 'month'},
