@@ -11,11 +11,11 @@ st.sidebar.header('Filter Parameters')
 st.subheader('File Upload')
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file, sheet_name='Data')
+    df = pd.read_csv(uploaded_file)
     st.write("filename:", uploaded_file.name)
 
 else:
-    df = pd.read_excel('./New Student - Transfer RAAM Report_Updated.xlsx', sheet_name='Data')
+    df = pd.read_csv('./RAAM_REPORT_DATA.csv')
 
 
 df = df.sort_values('Date')
@@ -76,7 +76,7 @@ st.write('You selected:', plot_option)
 
 
 # core logic
-
+df['Date'] = pd.to_datetime(df['Date'])
 def get_week_name(date):
     # month = date.strftime('%B')
     week_number = (date.day - 1) // 7 + 1
