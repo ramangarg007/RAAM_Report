@@ -77,9 +77,30 @@ st.write('You selected:', plot_option)
 
 # core logic
 df['Date'] = pd.to_datetime(df['Date'])
+
+# Defining a function to extract month and week numbers
+def extract_month_week(item):
+    month, week = re.match(r'([A-Za-z]+) Week (\d+)', item).groups()
+    month_order = {
+        'Jan': 0,
+        'Feb': 1,
+        'Mar': 2,
+        'Apr': 3,
+        'May': 4,
+        'Jun': 5,
+        'Jul': 6,
+        'Aug': 7,
+        'Sep': 8,
+        'Oct': 9,
+        'Nov': 10,
+        'Dec': 11
+    }
+    return month_order[month], int(week)
+
+
 def get_week_name(date):
     # month = date.strftime('%B')
-    week_number = (date.day - 1) // 7 + 1
+    week_number = ((date.day - 1) // 7) + 1
     return week_number
 
 df['week'] = df['Date'].dt.strftime('%U').astype(int)
@@ -87,16 +108,17 @@ df['year'] = df['Date'].dt.year
 df['week_of_month'] = df['Date'].apply(get_week_name)
 df['week_of_year'] = df['Date'].dt.strftime('%U').astype(int)
 df['month'] = df['Date'].dt.strftime('%b')
-
+df['month_numric'] = df['Date'].apply(lambda x: x.month)
 
 
 df = df[(df['Status'] == status_type) & (df['Count'] == count_type) & (df['Student Type'] == student_type) & (df['Term Type'] == term_type)]
 
+df_grouped = df.groupby(['Aid Year', 'month_numric','month', 'week_of_year', 'week_of_month'], as_index=False)[plot_option].mean()
+# df_grouped = df.groupby(['Aid Year', 'month', 'week_of_year', 'week_of_month'], as_index=False)[plot_option].mean()
 
-df_grouped = df.groupby(['Aid Year', 'month', 'week_of_year', 'week_of_month'], as_index=False)[plot_option].mean()
 df_grouped['month_week_format'] = df_grouped['month'].astype(str) + ' ' + df_grouped['week_of_year'].astype(str)
 df_grouped['required_format_week_month'] = df_grouped['month'].astype(str) + ' Week ' + df_grouped['week_of_month'].astype(str)
-df_grouped = df_grouped.sort_values('week_of_year')
+df_grouped = df_grouped.sort_values(['month_numric', 'month_week_format'])
 # df_grouped[:5]
 # df_grouped = df_grouped.sort_values('week')
 
@@ -130,9 +152,41 @@ fig2.update_traces(mode='lines+markers')
 # fig2.update_layout(xaxis_title='Month/Week')
 # fig.show()
 
+######################### new graph ###########################
+sorted_required_format_week_month = sorted(df_grouped['required_format_week_month'].unique(), key=extract_month_week)
+
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep','Dec']
+df_grouped['Temp_count'] = 0
+
+current_count = 1
+for month in months:
+    week_of_months_list = sorted(df_grouped[df_grouped['month'] == month]['week_of_month'].unique())
+    for week in week_of_months_list:
+        df_grouped.loc[(df_grouped['month'] == month) & (df_grouped['week_of_month'] == week), 'Temp_count'] = current_count
+        current_count += 1
+print('Done')        
+
+
+fig_3 = px.scatter(df_grouped, x='Temp_count', y='Total Admit Count', color='Aid Year',
+#              labels={'Total Admit Count': 'Total Admit Count', 'week': 'Week', 'year': 'Year', 'month': 'month'},
+             title='Weekly Total Admit Count Over Years')
+# fig.update_xaxes(title_text="Week", tickvals=np.arange(54), ticktext=['Week {}'.format(i) for i in range(54)])
+
+# fig_3.update_traces(mode='lines+markers')
+fig_3.update_xaxes(ticktext=sorted_required_format_week_month,
+                  tickvals=sorted(df_grouped['Temp_count'].unique()), tickangle=90)
+# fig.update_layout(xaxis_title='Month/Week')
+# fig.show()
+#########################
+
+
 st.subheader('Weekly {t} Over Years'.format(t=plot_option))
 st.plotly_chart(fig1, use_container_width=True)
 
 
 st.subheader('Weekly {t} Over Years'.format(t=plot_option))
 st.plotly_chart(fig2, use_container_width=True)
+
+
+st.subheader('Weekly {t} Over Years'.format(t=plot_option))
+st.plotly_chart(fig_3, use_container_width=True)
