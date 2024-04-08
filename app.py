@@ -168,7 +168,7 @@ for month in months:
 print('Done')        
 
 
-fig_3 = px.scatter(df_grouped, x='Temp_count', y='Total Admit Count', color='Aid Year', color_discrete_sequence=px.colors.qualitative.G10)
+fig_3 = px.scatter(df_grouped, x='Temp_count', y=plot_option, color='Aid Year', color_discrete_sequence=px.colors.qualitative.G10)
 #              labels={'Total Admit Count': 'Total Admit Count', 'week': 'Week', 'year': 'Year', 'month': 'month'})
 # fig.update_xaxes(title_text="Week", tickvals=np.arange(54), ticktext=['Week {}'.format(i) for i in range(54)])
 
