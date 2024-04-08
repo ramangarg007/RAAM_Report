@@ -165,7 +165,7 @@ for month in months:
     for week in week_of_months_list:
         df_grouped.loc[(df_grouped['month'] == month) & (df_grouped['week_of_month'] == week), 'Temp_count'] = current_count
         current_count += 1
-print('Done')        
+# print('Done')        
 
 df_grouped = df_grouped.sort_values('week_of_year')
 fig_3 = px.scatter(df_grouped, x='Temp_count', y=plot_option, color='Aid Year', color_discrete_sequence=px.colors.qualitative.G10)
