@@ -172,7 +172,7 @@ fig_3 = px.scatter(df_grouped, x='Temp_count', y=plot_option, color='Aid Year', 
 #              labels={'Total Admit Count': 'Total Admit Count', 'week': 'Week', 'year': 'Year', 'month': 'month'})
 # fig.update_xaxes(title_text="Week", tickvals=np.arange(54), ticktext=['Week {}'.format(i) for i in range(54)])
 
-# fig_3.update_traces(mode='lines+markers')
+fig_3.update_traces(mode='lines+markers')
 fig_3.update_xaxes(ticktext=sorted_required_format_week_month,
                   tickvals=sorted(df_grouped['Temp_count'].unique()), tickangle=90)
 # fig.update_layout(xaxis_title='Month/Week')
