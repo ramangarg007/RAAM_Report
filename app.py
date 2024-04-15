@@ -175,6 +175,7 @@ fig_3 = px.scatter(df_grouped, x='Temp_count', y=plot_option, color='Aid Year', 
 fig_3.update_traces(mode='lines+markers')
 fig_3.update_xaxes(ticktext=sorted_required_format_week_month,
                   tickvals=sorted(df_grouped['Temp_count'].unique()), tickangle=90)
+fig_3.update_layout(xaxis_title='Month/Week')
 # fig.update_layout(xaxis_title='Month/Week')
 # fig.show()
 #########################
